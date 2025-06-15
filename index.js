@@ -104,7 +104,7 @@ app.post('/createblog', upload.single('blogImage'), (req, res) => {
             console.error('Error saving blog:', JSON.stringify(err, null, 2));
             return res.status(500).send('Error saving the blog');
         }
-        res.redirect('/authRoutes');
+        res.redirect(`${req.baseUrl}/authRoutes`);
     });
 });
 
