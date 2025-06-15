@@ -1,0 +1,371 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fff;
+        }
+
+        /* Navbar */
+        header {
+            background-color: #333;
+            padding: 20px 0;
+            /* margin: 20px; */
+        }
+
+        .navbar {
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar ul {
+            display: flex;
+            justify-content: flex-end;
+            list-style: none;
+
+            margin-right: 50px;
+            margin-top: 0;
+        }
+
+        .navbar-logo {
+            height: 50px;
+
+            margin-right: 50vw;
+
+        }
+
+        .navbar ul li {
+            margin-left: 70px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .navbar ul li a:hover {
+            color: #E60023;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        .search-btn {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        /* Logout button style */
+        .logout {
+            background-color: #E60023;
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logout:hover {
+            background-color: #ff3b50;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: red;
+        }
+
+        #blogTitle,
+        #blogContent {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+        }
+
+        button[type="submit"] {
+            padding: 10px 15px;
+            background-color: #E60023;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #ff3b50;
+        }
+
+        /* Blog Container Styling */
+        .blog-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px;
+        }
+
+        .blog-card {
+            width: 300px;
+            height: 300px;
+            background-color: white;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 150px;
+            background-color: #ccc;
+            /* Placeholder for image */
+            object-fit: cover;
+        }
+
+        .blog-content {
+            padding: 10px;
+            flex-grow: 1;
+        }
+
+        .blog-content h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .blog-content p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .no-blogs {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .full-blog-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .full-blog-content {
+            background-color: white;
+            margin: auto;
+            padding: 20px;
+            width: 60%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            top: 50px;
+            /* Added margin */
+            max-height: 80vh;
+            /* Limit height */
+            overflow-y: auto;
+            /* Scrollable content */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <nav class="navbar">
+
+            <ul>
+                <img src="./logow.png" alt="Logo" class="navbar-logo">
+                <li style="margin-top:8px ;"><a href="#" id="openCreateBlog">Create Blog</a></li>
+                <li>
+                    <form class="search-form">
+                        <input type="text" placeholder="Search Blog" class="search-input">
+                        <button type="submit" class="search-btn">Search</button>
+                    </form>
+                </li>
+                <li style="margin-top:8px ;"> <a
+                        href="https://demo-pool-major.auth.ap-south-1.amazoncognito.com/logout?client_id=1u89digo5rufsq6r9tlibjlbho&logout_uri=http://localhost:5000/"
+                        class="logout">Log out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Blog Section -->
+    <main>
+        <section class="blog-container">
+            <% if (blogs.length> 0) { %>
+                <% blogs.forEach(function(blog) { %>
+                    <div class="blog-card" data-title="<%= blog.title %>" data-content="<%= blog.content %>"
+                        data-image="<%= blog.imagePath %>">
+                        <img src="<%= blog.imagePath %>" alt="Blog Image">
+                        <div class="blog-content">
+                            <h3>
+                                <%= blog.title %>
+                            </h3>
+                            <p>
+                                <%= blog.content.substring(0, 100) %>...
+                            </p> <!-- Show a preview of the content -->
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <div class="no-blogs">
+                                <h2>No Blogs created yet</h2>
+                            </div>
+                            <% } %>
+        </section>
+    </main>
+
+    <!-- Popup Modal for Create Blog -->
+    <!-- <div id="createBlogModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Blog</h2>
+            <form id="createBlogForm" method="POST" action="/createblog">
+                <label for="blogTitle">Blog Title:</label>
+                <input type="text" id="blogTitle" name="blogTitle" required>
+
+                <label for="blogContent">Blog Content:</label>
+                <textarea id="blogContent" name="blogContent" rows="5" required></textarea>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div> -->
+
+    <div id="fullBlogModal" class="full-blog-modal">
+        <div class="full-blog-content">
+            <span class="full-blog-close">&times;</span>
+            <h2 id="fullBlogTitle"></h2>
+            <img id="fullBlogImage" src="" alt="Blog Image" style="width: 100%; height: auto;">
+            <p id="fullBlogContent"></p>
+        </div>
+    </div>
+
+    <div id="createBlogModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Blog</h2>
+            <form id="createBlogForm" method="POST" action="/createblog" enctype="multipart/form-data">
+                <label for="blogTitle">Blog Title:</label>
+                <input type="text" id="blogTitle" name="blogTitle" required>
+
+                <label for="blogContent">Blog Content:</label>
+                <textarea id="blogContent" name="blogContent" rows="5" required></textarea>
+
+                <label for="blogImage">Blog Image:</label>
+                <input type="file" id="blogImage" name="blogImage" accept="image/*" required>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+
+    </div>
+
+    <script>
+        // Modal Logic
+        const modal = document.getElementById("createBlogModal");
+        const openBtn = document.getElementById("openCreateBlog");
+        const closeBtn = document.getElementsByClassName("close")[0];
+
+        openBtn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        closeBtn.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        const fullBlogModal = document.getElementById("fullBlogModal");
+        const closeFullBlogBtn = document.getElementsByClassName("full-blog-close")[0];
+        const fullBlogTitle = document.getElementById("fullBlogTitle");
+        const fullBlogContent = document.getElementById("fullBlogContent");
+        const fullBlogImage = document.getElementById("fullBlogImage");
+
+        // Add click event to each blog card
+        document.querySelectorAll('.blog-card').forEach(function (card) {
+            card.addEventListener('click', function () {
+                const title = card.getAttribute('data-title');
+                const content = card.getAttribute('data-content');
+                const image = card.getAttribute('data-image');
+
+                // Populate the modal with the blog data
+                fullBlogTitle.innerText = title;
+                fullBlogContent.innerText = content;
+                fullBlogImage.src = image;
+
+                // Display the modal
+                fullBlogModal.style.display = "block";
+            });
+        });
+
+        // Close the modal
+        closeFullBlogBtn.onclick = function () {
+            fullBlogModal.style.display = "none";
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function (event) {
+            if (event.target == fullBlogModal) {
+                fullBlogModal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+
+</html>
